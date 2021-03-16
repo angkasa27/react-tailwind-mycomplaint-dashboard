@@ -1,12 +1,33 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { useHistory } from 'react-router-dom';
 import InputText from '../../components/input/InputText';
+import { register } from './action';
+import ModalConfirm from '../../components/fragments/ModalConfirm';
 
 export default function Register() {
   const history = useHistory();
+  const [username, setUsername] = useState('');
+  const [name, setName] = useState('');
+  const [password, setPassword] = useState('');
+  const [nik, setNik] = useState('');
+  const [phone, setPhone] = useState('');
+  const [response, setResponse] = useState({ success: false });
+  const [message, setMessage] = useState('');
+  const [modalSuccess, setModalSuccess] = useState(false);
 
   const handleSubmit = (e) => {
     e.preventDefault();
+    register({ username, password, name, nik, phone }, setResponse);
+  };
+
+  useEffect(() => {
+    if (response.success) setModalSuccess(true);
+    else setMessage(response.message);
+  }, [response]);
+
+  const handleModal = () => {
+    setModalSuccess(false);
+    history.push('/login');
   };
 
   return (
@@ -21,39 +42,51 @@ export default function Register() {
               Daftar
             </h1>
           </div>
-          <form onSubmit={(e) => handleSubmit(e)} className="mt-5 z-20">
+          <form className="mt-5 z-20">
             <InputText
               placeholder="nama lengkapmu"
               type="text"
               className="mb-2"
               name="Nama Lengkap"
+              autoFocus={true}
+              value={name}
+              onChange={(e) => setName(e.target.value)}
             />
             <InputText
               placeholder="username tanpa spasi"
               type="text"
               name="Username"
               className="mb-2"
+              value={username}
+              onChange={(e) => setUsername(e.target.value)}
             />
             <InputText
               placeholder="minimal 12 digit angka"
               type="text"
               name="Nomor Telepon"
               className="mb-2"
+              value={phone}
+              onChange={(e) => setPhone(e.target.value)}
             />
             <InputText
               placeholder="15 digit NIK"
               type="text"
               name="NIK"
               className="mb-2"
+              value={nik}
+              onChange={(e) => setNik(e.target.value)}
             />
             <InputText
               placeholder="kombinasi huruf dan angka"
               type="password"
               name="Password"
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
             />
+            <p className="text-xs text-red-500 mt-2">{message}</p>
             <div className="flex mt-4 flex-col md:flex-row-reverse justify-between">
               <button
-                type="submit"
+                onClick={(e) => handleSubmit(e)}
                 className="btn-main mt-2 md:w-36 w-full font-bold tracking-wider"
               >
                 Daftar
@@ -71,6 +104,13 @@ export default function Register() {
           by: Dimas Angkasa Nurindra
         </span>
       </div>
+      <ModalConfirm
+        open={modalSuccess}
+        onClose={() => handleModal()}
+        name="Berhasil"
+        description="Akun telah berhasil didaftarkan"
+        cancel="Login"
+      />
     </div>
   );
 }

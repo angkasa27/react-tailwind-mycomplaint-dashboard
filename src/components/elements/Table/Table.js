@@ -47,7 +47,7 @@ DataTable.propTypes = {
 
 export function TableHeader({ item }) {
   return (
-    <th className="bg-gray-100 p-2 pl-5 text-left font-bold capitalize ">
+    <th className="bg-indigo-100 text-indigo-500 p-2 pl-5 text-left font-bold capitalize ">
       {item.heading}
     </th>
   );

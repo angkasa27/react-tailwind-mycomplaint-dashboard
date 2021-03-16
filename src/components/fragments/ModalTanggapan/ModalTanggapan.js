@@ -10,18 +10,29 @@ export default function ModalTanggapan({ open, onClose, data, handleAction }) {
         <h2 className="txt-h1 text-center mb-2">Detail Tanggapan</h2>
         <h3 className="font-bold mt-2">{data.subject}</h3>{' '}
         <span className="text-xs block text-gray-300 mb-2">
-          {data.userName + ', ' + moment(data.date).locale('id').format('LL')}
+          {data.userName +
+            ', ' +
+            moment(data.date).locale('id').format('D MMMM YYYY')}
         </span>
         <p className="overflow-y-auto max-h-50">
-          Lorem ipsum dolor sit amet consectetur adipisicing elit. Pariatur
-          necessitatibus molestias ullam illum doloribus tempore animi suscipit
-          similique natus tempora, voluptas explicabo perferendis vitae beatae
-          repellat et! Iste, ullam obcaecati?
+          {data.response && data.response.description}
         </p>
         <span className="text-xs block text-gray-300 my-1">
-          {data.operatorName + ', March 3 2021'}
+          {data.operatorName +
+            ', ' +
+            moment(data.response && data.response.createAt)
+              .locale('id')
+              .format('D MMMM YYYY')}
         </span>
         <div className="mt-2 flex flex-col md:flex-row-reverse justify-between">
+          {data.status === 'responded' && (
+            <button
+              onClick={() => handleAction()}
+              className="btn-main w-full md:ml-1 mt-2"
+            >
+              Selesai
+            </button>
+          )}
           <button
             onClick={() => onClose()}
             className="btn-outline w-full md:mr-1 mt-2"

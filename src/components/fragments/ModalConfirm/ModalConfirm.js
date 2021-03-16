@@ -9,6 +9,7 @@ export default function ModalConfirm({
   description,
   handleAction,
   name,
+  cancel,
   buttonText,
 }) {
   return (
@@ -23,16 +24,21 @@ export default function ModalConfirm({
         <div className="mt-2 flex justify-between">
           <button
             onClick={() => onClose()}
-            className="btn-outline w-full mr-1 mt-2"
+            className={
+              (buttonText ? 'btn-outline' : 'btn-main') +
+              ' w-full mr-1 mt-2 capitalize'
+            }
           >
-            Batal
+            {cancel}
           </button>
-          <button
-            onClick={() => handleAction()}
-            className="btn-main w-full ml-1 mt-2"
-          >
-            {buttonText}
-          </button>
+          {buttonText && (
+            <button
+              onClick={() => handleAction()}
+              className="btn-main w-full ml-1 mt-2"
+            >
+              {buttonText}
+            </button>
+          )}
         </div>
       </div>
     </ModalBase>
@@ -44,6 +50,7 @@ ModalConfirm.defaultProps = {
   description: '',
   buttonText: '',
   name: '',
+  cancel: 'batal',
   onClose: () => {},
   handleAction: () => {},
   data: {},
@@ -54,6 +61,7 @@ ModalConfirm.propTypes = {
   description: PropTypes.string,
   buttonText: PropTypes.string,
   name: PropTypes.string,
+  cancel: PropTypes.string,
   onClose: PropTypes.func,
   handleAction: PropTypes.func,
   data: PropTypes.object,

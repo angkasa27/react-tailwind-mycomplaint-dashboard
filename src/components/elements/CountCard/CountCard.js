@@ -14,7 +14,7 @@ export default function CountCard({ className, name, value, onClick }) {
         <p className="text-6xl md:text-7xl font-bold text-white ">{value}</p>
       </div>
       <div className="relative">
-        <p className="text-6xl md:text-8xl font-bold capitalize text-white absolute -left-6 -bottom-8 md:-left-12 md:-bottom-14 opacity-20">
+        <p className="text-6xl md:text-8xl font-bold capitalize text-white absolute -left-6 -bottom-8 md:-left-10 md:-bottom-12 opacity-20">
           {name}
         </p>
       </div>

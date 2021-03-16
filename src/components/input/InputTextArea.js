@@ -1,50 +1,36 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 
-export default function InputText(props) {
-  const {
-    type,
-    placeholder,
-    className,
-    name,
-    value,
-    onChange,
-    disabled,
-    autoFocus,
-  } = props;
+export default function InputTextArea(props) {
+  const { type, placeholder, className, name, value, onChange } = props;
 
   return (
     <>
       {name && <span className="input-span">{name}</span>}
-      <input
+      <textarea
         placeholder={placeholder}
         type={type}
         className={'input-text ' + className}
         value={value}
         onChange={onChange}
-        disabled={disabled}
-        autoFocus={autoFocus}
+        rows="4"
       />
     </>
   );
 }
 
-InputText.defaultProps = {
+InputTextArea.defaultProps = {
   type: '',
   placeholder: '',
-  disabled: false,
   className: '',
   name: '',
   value: '',
   onChange: () => {},
-  autoFocus: false,
 };
 
-InputText.propTypes = {
+InputTextArea.propTypes = {
   type: PropTypes.string,
   placeholder: PropTypes.string,
-  disabled: PropTypes.bool,
-  autoFocus: PropTypes.bool,
   className: PropTypes.string,
   name: PropTypes.string,
   value: PropTypes.string,

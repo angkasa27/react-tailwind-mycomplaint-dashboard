@@ -8,7 +8,6 @@ export default function ModalBase({ children, open, onClose }) {
     <div className={classes}>
       <div
         onClick={(e) => {
-          console.log('click');
           e.preventDefault();
           onClose();
         }}

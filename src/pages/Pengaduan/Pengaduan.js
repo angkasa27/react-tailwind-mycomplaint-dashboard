@@ -1,31 +1,66 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import Dashboard from '../../components/Dashboard';
 import Table from '../../components/elements/Table';
 import ModalDetail from '../../components/fragments/ModalDetail';
 import ModalTanggapan from '../../components/fragments/ModalTanggapan';
 import ModalConfirm from '../../components/fragments/ModalConfirm';
 import moment from 'moment';
+import FormLaporan from './FormLaporan';
+import { useHistory, useLocation } from 'react-router-dom';
+import Pagination from '../../components/elements/Pagination';
+import queryString from 'querystring';
+import { getAll, getDetail, updateStatus, submitPengaduan } from './action';
 
 export default function Pengaduan() {
+  const history = useHistory();
+  const location = useLocation();
   const [detail, openDetail] = useState(false);
   const [tanggapan, openTanggapan] = useState(false);
   const [hapus, openHapus] = useState(false);
-  const [terima, openTerima] = useState(false);
+  const [selesai, openSelesai] = useState(false);
+  const [data, setData] = useState({ data: [] });
+  const [dataDetail, setDataDetail] = useState({ data: [] });
+  const [loading, setLoading] = useState(false);
+  const { page = 1, id, add = false } = queryString.parse(
+    location.search.replace('?', '')
+  );
 
-  const renderDetail = (detail) => {
+  const renderDetail = (detail, pengaduanId) => {
     if (detail)
       return (
-        <span onClick={() => openDetail(true)} className="text-active">
+        <span
+          onClick={() => {
+            history.push({
+              search: queryString.stringify({
+                page,
+                id: pengaduanId,
+              }),
+            });
+            openDetail(true);
+          }}
+          className="text-active"
+        >
           lihat detail
         </span>
       );
     else return <p className="text-gray-400">laporan dibatalkan</p>;
   };
 
-  const renderResponse = (response) => {
+  const renderResponse = (response, pengaduanId) => {
     if (response)
       return (
-        <p onClick={() => openTanggapan(true)} className="text-active">
+        <p
+          onClick={() => {
+            history.push({
+              search: queryString.stringify({
+                page,
+                id: pengaduanId,
+              }),
+            });
+            openTanggapan(true);
+          }}
+          className="text-active"
+        >
           lihat tanggapan
         </p>
       );
@@ -37,8 +72,8 @@ export default function Pengaduan() {
       case 'submitted':
         return (
           <div className="flex">
-            <p className="animate-pulse text-xs text-white bg-blue-500 rounded-full  px-3 py-1">
-              laporan baru
+            <p className="text-xs text-white bg-blue-500 rounded-full  px-3 py-1">
+              laporan terkirim
             </p>
           </div>
         );
@@ -53,8 +88,8 @@ export default function Pengaduan() {
       case 'responded':
         return (
           <div className="flex">
-            <p className="text-xs text-white bg-indigo-500 rounded-full  px-3 py-1">
-              tanggapan terkirim
+            <p className="animate-pulse text-xs text-white bg-indigo-500 rounded-full  px-3 py-1">
+              tanggapan diterima
             </p>
           </div>
         );
@@ -86,51 +121,70 @@ export default function Pengaduan() {
   };
 
   const renderDate = (date) => {
-    return moment(date).locale('id').format('LL');
+    return moment(date).locale('id').format('D MMMM YYYY');
   };
 
-  const renderAction = (status) => {
-    if (status === 'submitted' || status === 'onProgress')
-      return (
-        <div className="flex">
-          {status === 'submitted' && (
-            <span
-              onClick={() => openTerima(true)}
-              className="mr-1 bg-blue-500 transition duration-100 ease-out hover:bg-blue-700 text-white w-6 h-6 btn-icon  cursor-pointer"
-            >
-              <svg
-                xmlns="http://www.w3.org/2000/svg"
-                viewBox="0 0 20 20"
-                fill="currentColor"
-                className="w-4"
-              >
-                <path
-                  fill-rule="evenodd"
-                  d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z"
-                  clip-rule="evenodd"
-                />
-              </svg>
-            </span>
-          )}
-          {status === 'onProgress' && (
-            <span className="mr-1 bg-indigo-500 transition duration-100 ease-out hover:bg-indigo-700 text-white w-6 h-6 btn-icon  cursor-pointer">
-              <svg
-                xmlns="http://www.w3.org/2000/svg"
-                viewBox="0 0 20 20"
-                fill="currentColor"
-                className="w-4"
-              >
-                <path
-                  fill-rule="evenodd"
-                  d="M18 13V5a2 2 0 00-2-2H4a2 2 0 00-2 2v8a2 2 0 002 2h3l3 3 3-3h3a2 2 0 002-2zM5 7a1 1 0 011-1h8a1 1 0 110 2H6a1 1 0 01-1-1zm1 3a1 1 0 100 2h3a1 1 0 100-2H6z"
-                  clip-rule="evenodd"
-                />
-              </svg>
-            </span>
-          )}
+  const renderAction = (status, pengaduanId) => {
+    return (
+      <div className="flex">
+        {status === 'responded' ? (
           <span
-            onClick={() => openHapus(true)}
-            className=" w-6 h-6 btn-icon text-white bg-purple-500 transition duration-100 ease-out hover:bg-purple-700 cursor-pointer"
+            onClick={() => {
+              history.push({
+                search: queryString.stringify({
+                  page,
+                  id: pengaduanId,
+                }),
+              });
+              openSelesai(true);
+            }}
+            className="mr-1 w-6 h-6 btn-icon text-white bg-purple-500 transition duration-100 ease-out hover:bg-purple-700 cursor-pointer"
+          >
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              fill="none"
+              viewBox="0 0 24 24"
+              stroke="currentColor"
+              className="w-4"
+            >
+              <path
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                stroke-width="2"
+                d="M5 13l4 4L19 7"
+              />
+            </svg>
+          </span>
+        ) : (
+          <span className="mr-1 w-6 h-6 btn-icon text-gray-400 bg-gray-100 ">
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              fill="none"
+              viewBox="0 0 24 24"
+              stroke="currentColor"
+              className="w-4"
+            >
+              <path
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                stroke-width="2"
+                d="M5 13l4 4L19 7"
+              />
+            </svg>
+          </span>
+        )}
+        {status === 'submitted' ? (
+          <span
+            onClick={() => {
+              history.push({
+                search: queryString.stringify({
+                  page,
+                  id: pengaduanId,
+                }),
+              });
+              openHapus(true);
+            }}
+            className=" w-6 h-6 btn-icon text-white bg-red-500 transition duration-100 ease-out hover:bg-red-700 cursor-pointer"
           >
             <svg
               xmlns="http://www.w3.org/2000/svg"
@@ -145,15 +199,8 @@ export default function Pengaduan() {
               />
             </svg>
           </span>
-        </div>
-      );
-    else
-      return (
-        <div className="flex">
-          <span
-            onClick={() => openHapus(true)}
-            className=" w-6 h-6 btn-icon text-gray-400 bg-gray-100  cursor-not-allowed"
-          >
+        ) : (
+          <span className=" w-6 h-6 btn-icon text-gray-400 bg-gray-100 ">
             <svg
               xmlns="http://www.w3.org/2000/svg"
               viewBox="0 0 20 20"
@@ -167,8 +214,9 @@ export default function Pengaduan() {
               />
             </svg>
           </span>
-        </div>
-      );
+        )}
+      </div>
+    );
   };
 
   const column = [
@@ -177,12 +225,8 @@ export default function Pengaduan() {
       value: (v) => v.subject,
     },
     {
-      heading: 'pelapor',
-      value: (v) => v.userName,
-    },
-    {
       heading: 'detail laporan',
-      value: (v) => renderDetail(v.detail),
+      value: (v) => renderDetail(v.detail, v.pengaduanId),
     },
     {
       heading: 'tgl pengaduan',
@@ -195,7 +239,7 @@ export default function Pengaduan() {
 
     {
       heading: 'tanggapan',
-      value: (v) => renderResponse(v.response),
+      value: (v) => renderResponse(v.response, v.pengaduanId),
     },
     {
       heading: 'petugas',
@@ -203,64 +247,7 @@ export default function Pengaduan() {
     },
     {
       heading: '',
-      value: (v) => renderAction(v.status),
-    },
-  ];
-
-  const data = [
-    {
-      subject: 'Pelyananan Kurang Memuaskan',
-      userName: 'Bambang Pamungkas',
-      detail: true,
-      response: false,
-      operatorName: 'Adinda Fara Putri',
-      createAt: '12/12/2020',
-      status: 'submitted',
-    },
-    {
-      subject: 'Jalan Rusak',
-      userName: 'Naufal Ahmad Firdaus',
-      detail: true,
-      response: false,
-      operatorName: 'Adinda Fara Putri',
-      createAt: '12/01/2020',
-      status: 'onProgress',
-    },
-    {
-      subject: 'Jalan Rusak',
-      userName: 'Samid Angkasa Nurindra',
-      detail: true,
-      response: true,
-      operatorName: 'Adinda Fara Putri',
-      createAt: '02/12/2021',
-      status: 'responded',
-    },
-    {
-      subject: 'Jalan Rusak',
-      userName: 'Sultan Latfhul',
-      detail: true,
-      response: true,
-      operatorName: 'Adinda Fara Putri',
-      createAt: '01/20/2021',
-      status: 'done',
-    },
-    {
-      subject: 'Jalan Rusak',
-      userName: 'Nanda Putra Wangsa Wardani',
-      detail: true,
-      response: true,
-      operatorName: 'Adinda Fara Putri',
-      createAt: '12/20/2020',
-      status: 'rejected',
-    },
-    {
-      subject: 'Jalan Rusak',
-      userName: 'Bayu Aji',
-      detail: false,
-      response: false,
-      operatorName: 'Adinda Fara Putri',
-      createAt: '11/27/2020',
-      status: 'canceled',
+      value: (v) => renderAction(v.status, v.pengaduanId),
     },
   ];
 
@@ -268,7 +255,38 @@ export default function Pengaduan() {
     openDetail(false);
     openTanggapan(false);
     openHapus(false);
-    openTerima(false);
+    openSelesai(false);
+    history.push({
+      search: queryString.stringify({
+        page,
+      }),
+    });
+  };
+
+  const handleSubmit = (v) => {
+    const form = new FormData();
+    form.append('subject', v.subject);
+    form.append('image', v.image);
+    form.append('description', v.description);
+    form.append('createAt', v.createAt);
+    submitPengaduan(form, setLoading, handleResponse);
+  };
+
+  useEffect(() => {
+    getAll(page, setData);
+  }, [page, loading]);
+
+  useEffect(() => {
+    if (id) getDetail(id, setDataDetail);
+  }, [id, loading]);
+
+  const handleResponse = (v) => {
+    if (v) history.push('/pengaduan');
+  };
+
+  const handleUpdateStatus = (status) => {
+    updateStatus(id, { status }, setLoading);
+    closeModal();
   };
 
   return (
@@ -289,27 +307,122 @@ export default function Pengaduan() {
           />
         </svg>
         Pengaduan
+        {add && (
+          <>
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              viewBox="0 0 20 20"
+              fill="currentColor"
+              className="w-6"
+            >
+              <path
+                fill-rule="evenodd"
+                d="M7.293 14.707a1 1 0 010-1.414L10.586 10 7.293 6.707a1 1 0 011.414-1.414l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414 0z"
+                clip-rule="evenodd"
+              />
+            </svg>
+            <span className="text-lg md:text-2xl">Laporan Baru</span>
+          </>
+        )}
       </p>
-      <div className="card bg-white mt-9">
-        <div className="overflow-x-auto w-full rounded-md border-gray-100 border">
-          <Table column={column} data={data} className="table w-full" />
-        </div>
+      <div className="mt-9 ">
+        {add ? (
+          <FormLaporan handleSubmit={handleSubmit} />
+        ) : (
+          <div className="card bg-white">
+            <div className="flex justify-between mb-4">
+              <div className="flex">
+                <span className="btn-main w-32 md:flex items-center justify-center mr-4 hidden">
+                  <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    viewBox="0 0 20 20"
+                    fill="currentColor"
+                    className="w-5 mr-1"
+                  >
+                    <path
+                      fill-rule="evenodd"
+                      d="M4 4a2 2 0 012-2h4.586A2 2 0 0112 2.586L15.414 6A2 2 0 0116 7.414V16a2 2 0 01-2 2H6a2 2 0 01-2-2V4zm2 6a1 1 0 011-1h6a1 1 0 110 2H7a1 1 0 01-1-1zm1 3a1 1 0 100 2h6a1 1 0 100-2H7z"
+                      clip-rule="evenodd"
+                    />
+                  </svg>
+                  {'Total : ' + (data.meta ? data.meta.totalData : 0)}
+                </span>
+
+                <button
+                  onClick={() =>
+                    history.push({
+                      search: queryString.stringify({
+                        add: true,
+                      }),
+                    })
+                  }
+                  className="btn-outline w-auto px-5 items-center justify-center flex"
+                >
+                  <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    fill="none"
+                    viewBox="0 0 24 24"
+                    stroke="currentColor"
+                    className="w-5 mr-1"
+                  >
+                    <path
+                      stroke-linecap="round"
+                      stroke-linejoin="round"
+                      stroke-width="2"
+                      d="M9 13h6m-3-3v6m5 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"
+                    />
+                  </svg>
+                  Buat Laporan Baru
+                </button>
+              </div>
+              <div className="flex w-14 justify-between">
+                <div className="w-4 h-4 bg-blue-500 rounded-full" />
+                <div className="w-4 h-4 bg-indigo-500 rounded-full" />
+                <div className="w-4 h-4 bg-purple-500 rounded-full" />
+              </div>
+            </div>
+            <div className="overflow-x-auto w-full rounded-md border-gray-100 border">
+              <Table
+                column={column}
+                data={data.data}
+                className="table w-full"
+              />
+            </div>
+            {data.meta && data.meta.totalData === 0 && (
+              <div className="flex justify-center mt-4">
+                <p className="">Data Kosong</p>
+              </div>
+            )}
+            <div className="flex justify-end mt-4">
+              <Pagination location={location.pathname} meta={data.meta} />
+            </div>
+          </div>
+        )}
       </div>
-      <ModalDetail open={detail} onClose={closeModal} data={data[0]} />
-      <ModalTanggapan open={tanggapan} onClose={closeModal} data={data[0]} />
+      <ModalDetail open={detail} onClose={closeModal} data={dataDetail.data} />
+      <ModalTanggapan
+        open={tanggapan}
+        onClose={closeModal}
+        data={dataDetail.data}
+      />
       <ModalConfirm
         open={hapus}
         onClose={closeModal}
-        name="Tolak laporan"
-        description="Apakah anda ingin menghapus laporan ini?"
-        buttonText="Tolak"
+        name="Batalkan laporan"
+        description="Apakah anda ingin membatalkan pengajuan laporan ini?"
+        buttonText="Batalkan"
+        cancel="Kembali"
+        handleAction={() => handleUpdateStatus('canceled')}
       />
+
       <ModalConfirm
-        open={terima}
+        open={selesai}
         onClose={closeModal}
-        name="Terima laporan"
-        description="Apakah anda memproses laporan ini?"
-        buttonText="Proses"
+        name="Laporan selesai"
+        description="Apakah laporan masalah ini telah selesai?"
+        buttonText="Selesai"
+        cancel="Kembali"
+        handleAction={() => handleUpdateStatus('done')}
       />
     </Dashboard>
   );

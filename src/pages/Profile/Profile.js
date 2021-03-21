@@ -34,43 +34,13 @@ export default function Pengguna() {
     history.push('/profile');
   };
 
-  return (
-    <Dashboard>
-      <p className="txt-h1 mx-5 md:mx-0 flex items-center">
-        <svg
-          xmlns="http://www.w3.org/2000/svg"
-          fill="none"
-          viewBox="0 0 24 24"
-          stroke="currentColor"
-          className="w-6 md:w-8 mr-2"
-        >
-          <path
-            stroke-linecap="round"
-            stroke-linejoin="round"
-            stroke-width="2"
-            d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"
-          />
-        </svg>
-        Profile
-        {edit && (
-          <>
-            <svg
-              xmlns="http://www.w3.org/2000/svg"
-              viewBox="0 0 20 20"
-              fill="currentColor"
-              className="w-6"
-            >
-              <path
-                fill-rule="evenodd"
-                d="M7.293 14.707a1 1 0 010-1.414L10.586 10 7.293 6.707a1 1 0 011.414-1.414l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414 0z"
-                clip-rule="evenodd"
-              />
-            </svg>
-            <span className="text-lg md:text-2xl">Edit Profile</span>
-          </>
-        )}
-      </p>
-      <div className="mt-9">
+  const renderContent = () => {
+    if (edit)
+      return <FormProfile handleSubmit={handleUpdate} data={response.data} />;
+    else if (changePassword)
+      return <FormPassword handleSubmit={handlePassword} />;
+    else
+      return (
         <div className="card bg-white flex flex-col sm:flex-row ">
           <div className="mt-2 flex flex-col items-center">
             <div className="mb-3 border-4 border-indigo-200 rounded-full p-1 w-44 h-44 overflow-hidden bg-gray-400">
@@ -164,11 +134,63 @@ export default function Pengguna() {
             </div>
           </div>
         </div>
-        {changePassword && <FormPassword handleSubmit={handlePassword} />}
+      );
+  };
+
+  return (
+    <Dashboard>
+      <p className="txt-h1 mx-5 md:mx-0 flex items-center">
+        <svg
+          xmlns="http://www.w3.org/2000/svg"
+          fill="none"
+          viewBox="0 0 24 24"
+          stroke="currentColor"
+          className="w-6 md:w-8 mr-2"
+        >
+          <path
+            stroke-linecap="round"
+            stroke-linejoin="round"
+            stroke-width="2"
+            d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"
+          />
+        </svg>
+        Profile
         {edit && (
-          <FormProfile handleSubmit={handleUpdate} data={response.data} />
+          <>
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              viewBox="0 0 20 20"
+              fill="currentColor"
+              className="w-6"
+            >
+              <path
+                fill-rule="evenodd"
+                d="M7.293 14.707a1 1 0 010-1.414L10.586 10 7.293 6.707a1 1 0 011.414-1.414l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414 0z"
+                clip-rule="evenodd"
+              />
+            </svg>
+            <span className="text-lg md:text-2xl">Edit Profile</span>
+          </>
         )}
-      </div>
+        {changePassword && (
+          <>
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              viewBox="0 0 20 20"
+              fill="currentColor"
+              className="w-6"
+            >
+              <path
+                fill-rule="evenodd"
+                d="M7.293 14.707a1 1 0 010-1.414L10.586 10 7.293 6.707a1 1 0 011.414-1.414l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414 0z"
+                clip-rule="evenodd"
+              />
+            </svg>
+            <span className="text-lg md:text-2xl">Edit Password</span>
+          </>
+        )}
+      </p>
+      <div className="mt-9">{renderContent()}</div>
     </Dashboard>
   );
 }

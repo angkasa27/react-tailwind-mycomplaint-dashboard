@@ -1,11 +1,10 @@
 import { registerUser } from '../../utils/fetch';
-import { setToken } from '../../utils/storage';
 
 export function register(data, setResponse) {
   registerUser(data)
     .then((res) => {
-      if (res.data.accessToken) {
-        setToken(res.data.accessToken);
+      console.log(res);
+      if (res.success) {
         return setResponse({ success: true, message: 'SUKSES' });
         // location.href = `/`;
       } else {

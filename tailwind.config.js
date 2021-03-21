@@ -10,6 +10,15 @@ module.exports = {
       fontFamily: {
         nunito: ['Nunito'],
       },
+      keyframes: {
+        modalDown: {
+          '0%': { transform: 'translate(-50%, -40%)', opacity: '0%' },
+          '100%': { transform: 'translate(-50%, -50%)', opacity: '100%' },
+        },
+      },
+      animation: {
+        modalDown: 'modalDown .3s ease-out',
+      },
     },
   },
   variants: {

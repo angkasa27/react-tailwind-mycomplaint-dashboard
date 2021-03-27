@@ -9,7 +9,13 @@ import FormLaporan from './FormLaporan';
 import { useHistory, useLocation } from 'react-router-dom';
 import Pagination from '../../components/elements/Pagination';
 import queryString from 'querystring';
-import { getAll, getDetail, updateStatus, submitPengaduan } from './action';
+import {
+  getAll,
+  getDetail,
+  updateStatus,
+  submitPengaduan,
+  getDokumen,
+} from './action';
 
 export default function Pengaduan() {
   const history = useHistory();
@@ -20,6 +26,7 @@ export default function Pengaduan() {
   const [selesai, openSelesai] = useState(false);
   const [data, setData] = useState({ data: [] });
   const [dataDetail, setDataDetail] = useState({ data: [] });
+  const [dokumen, setDokumen] = useState(false);
   const [loading, setLoading] = useState(false);
   const { page = 1, id, add = false } = queryString.parse(
     location.search.replace('?', '')
@@ -289,6 +296,23 @@ export default function Pengaduan() {
     closeModal();
   };
 
+  const handleDownloadDokumen = () => {
+    getDokumen(setDokumen);
+  };
+
+  useEffect(() => {
+    if (dokumen) {
+      const linkSource = `data:application/pdf;base64,${dokumen.data}`;
+      const downloadLink = document.createElement('a');
+      const fileName = `all_pengaduan_${moment().format()}.pdf`;
+
+      downloadLink.href = linkSource;
+      downloadLink.download = fileName;
+      downloadLink.click();
+      setDokumen(false);
+    }
+  }, [dokumen]);
+
   return (
     <Dashboard>
       <p className="txt-h1 mx-5 md:mx-0 flex items-center">
@@ -356,7 +380,7 @@ export default function Pengaduan() {
                       }),
                     })
                   }
-                  className="btn-outline w-auto px-5 items-center justify-center flex"
+                  className="btn-outline w-auto px-5 items-center justify-center flex mr-4"
                 >
                   <svg
                     xmlns="http://www.w3.org/2000/svg"
@@ -373,6 +397,25 @@ export default function Pengaduan() {
                     />
                   </svg>
                   Buat Laporan Baru
+                </button>
+
+                <button
+                  onClick={() => handleDownloadDokumen()}
+                  className="btn-outline w-52 items-center justify-center flex"
+                >
+                  <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    viewBox="0 0 20 20"
+                    fill="currentColor"
+                    className="w-5 mr-1"
+                  >
+                    <path
+                      fill-rule="evenodd"
+                      d="M6 2a2 2 0 00-2 2v12a2 2 0 002 2h8a2 2 0 002-2V7.414A2 2 0 0015.414 6L12 2.586A2 2 0 0010.586 2H6zm5 6a1 1 0 10-2 0v3.586l-1.293-1.293a1 1 0 10-1.414 1.414l3 3a1 1 0 001.414 0l3-3a1 1 0 00-1.414-1.414L11 11.586V8z"
+                      clip-rule="evenodd"
+                    />
+                  </svg>
+                  Download dokumen
                 </button>
               </div>
               <div className="flex w-14 justify-between">

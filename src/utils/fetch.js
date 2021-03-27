@@ -67,3 +67,8 @@ export const editProfile = async (data) =>
 
 export const editPassword = async (data) =>
   await fetch(`${BASE_URL}/password`, 'put', data, { headers: BEARER_AUTH() });
+
+export const getDokumenPengaduan = async () =>
+  await fetch(`${BASE_URL}/laporan/pengaduan`, 'get', {
+    headers: BEARER_AUTH(),
+  });

@@ -3,6 +3,7 @@ import {
   getDetailPengaduan,
   putStatusPengaduan,
   addPengaduan,
+  getDokumenPengaduan,
 } from '../../utils/fetch';
 
 export function getAll(page, setResponse) {
@@ -86,5 +87,24 @@ export function submitPengaduan(data, setLoading, handleResponse) {
       console.log(err);
       handleResponse(false);
       setLoading(false);
+    });
+}
+
+export function getDokumen(setResponse) {
+  getDokumenPengaduan()
+    .then((res) => {
+      if (res) {
+        return setResponse(res);
+      } else {
+        console.log(res.message);
+        return setResponse({ success: false, message: res.message });
+      }
+    })
+    .catch((err) => {
+      console.log(err);
+      return setResponse({
+        success: false,
+        message: 'Silahkan Hubungi Developer',
+      });
     });
 }

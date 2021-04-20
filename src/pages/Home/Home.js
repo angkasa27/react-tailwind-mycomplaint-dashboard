@@ -4,6 +4,7 @@ import CountCard from '../../components/elements/CountCard';
 import { useHistory } from 'react-router-dom';
 import PropTypes from 'prop-types';
 import { getUserProfile, getAllstatistic } from './action';
+import moment from 'moment';
 
 export default function Home() {
   const [response, setResponse] = useState({ data: {} });
@@ -18,11 +19,17 @@ export default function Home() {
 
   return (
     <Dashboard>
-      <p className="txt-h1 mx-5 md:mx-0">
-        {'Selamat Datang' +
-          (response.data ? ', ' + response.data.nama : '') +
-          '!'}
-      </p>
+      <div className="flex justify-between items-baseline">
+        <p className="txt-h1 mx-5 md:mx-0">
+          {'Selamat Datang' +
+            (response.data && ', ' + response.data.nama) +
+            '!'}
+        </p>
+        <p className="md:block hidden font-semibold text-xl">
+          {moment().locale('id').format('dddd, D MMMM YYYY')}
+        </p>
+      </div>
+
       <div className="mt-9 grid grid-cols-2 mx-5 md:mx-0 gap-5">
         <AddCard className=" sm:col-span-1 from-blue-400 to-indigo-500 hover:to-blue-400" />
         <CountCard

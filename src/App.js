@@ -20,8 +20,7 @@ export default function App() {
     if (!getToken() && !noAuth) {
       history.push('/login');
     } else if (getToken() && noAuth) {
-      // history.push('/dashboard');
-      console.log('mantap');
+      history.push('/dashboard');
     }
   }, [location.pathname]);
 

@@ -30,23 +30,23 @@ export default function Home() {
         </p>
       </div>
 
-      <div className="mt-9 grid grid-cols-2 mx-5 md:mx-0 gap-5">
+      <div className="mt-9 grid grid-cols-3 mx-5 md:mx-0 gap-5">
         <AddCard className=" sm:col-span-1 from-blue-400 to-indigo-500 hover:to-blue-400" />
         <CountCard
           name={'di proses'}
           value={statistic.data && statistic.data.onProgress}
-          className=" sm:col-span-1 from-purple-500 to-indigo-400 hover:to-purple-500"
+          className=" md:col-span-2 col-span-3 from-purple-500 to-indigo-400"
         />
         <CountCard
           name={'ditanggapi'}
           value={statistic.data && statistic.data.responded}
-          className=" sm:col-span-1 from-indigo-400 to-purple-500 hover:to-indigo-400"
+          className=" md:col-span-2 col-span-3 from-purple-500 to-indigo-400"
         />
-        <CountCard
+        {/* <CountCard
           name={'selesai'}
           value={statistic.data && statistic.data.done}
           className=" sm:col-span-1 from-indigo-500 to-blue-400 hover:to-indigo-500"
-        />
+        /> */}
       </div>
     </Dashboard>
   );
@@ -57,15 +57,15 @@ export function AddCard({ className }) {
   return (
     <div
       onClick={() => history.push('/pengaduan?add=true')}
-      className={'card col-span-2 bg-gradient-to-r cursor-pointer ' + className}
+      className={
+        'card md:col-span-1 md:row-span-2 col-span-3 bg-gradient-to-r cursor-pointer ' +
+        className
+      }
     >
-      <div className=" flex justify-between items-center ">
-        <div>
-          <p className="font-bold text-white">Tambah</p>
-          <p className="text-4xl md:text-5xl font-bold capitalize text-white ">
-            Laporan Baru
-          </p>
-        </div>
+      <div className=" flex justify-between items-center md:flex-col-reverse h-full">
+        <p className="text-4xl font-bold capitalize text-white ">
+          Laporan Baru
+        </p>
         <svg
           xmlns="http://www.w3.org/2000/svg"
           fill="none"
@@ -80,6 +80,7 @@ export function AddCard({ className }) {
             d="M9 13h6m-3-3v6m5 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"
           />
         </svg>
+        <div className="hidden md:block" />
       </div>
       <div className="relative">
         <p className="text-6xl md:text-8xl font-bold capitalize text-white absolute -left-6 -bottom-8 md:-left-10 md:-bottom-12 opacity-20">

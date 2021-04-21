@@ -1,8 +1,7 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import Navbar from '../../components/elements/Navbar';
-import { clearStorage } from '../../utils/storage';
+import { clearStorage, getName } from '../../utils/storage';
 import { useHistory } from 'react-router-dom';
-import { getUserProfile } from '../../pages/Home/action';
 
 export default function Dashboard({ children }) {
   const [logout, setLogout] = useState(false);
@@ -24,10 +23,6 @@ export default function Dashboard({ children }) {
 
 export function Header({ logout = false, setLogout }) {
   const history = useHistory();
-  const [response, setResponse] = useState({ data: {} });
-  useEffect(() => {
-    getUserProfile(setResponse);
-  }, []);
 
   const handleLogout = () => {
     clearStorage();
@@ -74,9 +69,7 @@ export function Header({ logout = false, setLogout }) {
             />
           </svg>
         </div>
-        <p className="text-lg font-bold ml-4 mr-6">
-          {response.data && response.data.nama}
-        </p>
+        <p className="text-lg font-bold ml-4 mr-6">{getName()}</p>
         <span onClick={() => setLogout(!logout)} className="cursor-pointer ">
           <svg
             xmlns="http://www.w3.org/2000/svg"

@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { useHistory } from 'react-router-dom';
 import InputText from '../../components/input/InputText';
 import { register } from './action';
+import moment from 'moment';
 import ModalConfirm from '../../components/fragments/ModalConfirm';
 
 export default function Register() {
@@ -15,9 +16,16 @@ export default function Register() {
   const [message, setMessage] = useState('');
   const [modalSuccess, setModalSuccess] = useState(false);
 
+  const date = () => {
+    return moment().format();
+  };
+
   const handleSubmit = (e) => {
     e.preventDefault();
-    register({ username, password, name, nik, phone }, setResponse);
+    register(
+      { username, password, name, nik, phone, createAt: date() },
+      setResponse
+    );
   };
 
   useEffect(() => {

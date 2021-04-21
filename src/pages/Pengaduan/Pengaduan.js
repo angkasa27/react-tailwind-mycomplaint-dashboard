@@ -401,7 +401,7 @@ export default function Pengaduan() {
 
                 <button
                   onClick={() => handleDownloadDokumen()}
-                  className="btn-outline w-52 items-center justify-center flex"
+                  className="btn-outline w-52 items-center justify-center sm:flex hidden"
                 >
                   <svg
                     xmlns="http://www.w3.org/2000/svg"

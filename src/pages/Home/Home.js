@@ -21,9 +21,9 @@ export default function Home() {
     <Dashboard>
       <div className="flex justify-between items-baseline">
         <p className="txt-h1 mx-5 md:mx-0">
-          {'Selamat Datang' +
-            (response.data && ', ' + response.data.nama) +
-            '!'}
+          {'Selamat Datang' + (response.data && ', ')}
+          <br className="md:hidden" />
+          {(response.data && response.data.nama) + '!'}
         </p>
         <p className="md:block hidden font-semibold text-xl">
           {moment().locale('id').format('dddd, D MMMM YYYY')}

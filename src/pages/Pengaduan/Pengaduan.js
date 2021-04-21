@@ -229,7 +229,7 @@ export default function Pengaduan() {
   const column = [
     {
       heading: 'Subjek',
-      value: (v) => v.subject,
+      value: (v) => <p className="font-bold">{v.subject}</p>,
     },
     {
       heading: 'detail laporan',

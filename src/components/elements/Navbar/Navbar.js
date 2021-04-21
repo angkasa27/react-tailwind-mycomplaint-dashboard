@@ -2,12 +2,10 @@ import React, { useState, useEffect } from 'react';
 import { NavLink } from 'react-router-dom';
 import { clearStorage } from '../../../utils/storage';
 import { useHistory } from 'react-router-dom';
-import ModalConfirm from '../../fragments/ModalConfirm';
 
 export default function Navbar({ className }) {
   const history = useHistory();
   const [view, setView] = useState(false);
-  const [modal, openModal] = useState(false);
   const [classes, setClasses] = useState('');
   useEffect(() => {
     if (view) setClasses('');
@@ -21,9 +19,9 @@ export default function Navbar({ className }) {
 
   return (
     <div className={className}>
-      <nav className="bg-white shadow md:shadow-xl overflow-hidden mb-5 md:mb-0 md:w-1/6 md:fixed md:h-screen">
-        <div className="mx-6 my-6 md:my-0 flex justify-between">
-          <h1 className="txt-h1 md:text-2xl md:my-10">
+      <nav className="bg-white overflow-hidden md:w-1/6 md:fixed md:h-screen">
+        <div className="mx-6 my-4 md:my-0 flex justify-between">
+          <h1 className="txt-h1 md:text-2xl md:my-5">
             My<span className="text-gray-600">Complaint</span>
           </h1>
           <div
@@ -119,8 +117,8 @@ export default function Navbar({ className }) {
             <p>Profile</p>
           </NavLink>
           <span
-            onClick={() => openModal(true)}
-            className="flex rounded p-4 content-center hover:bg-indigo-50 transition-colors duration-100 ease-out cursor-pointer"
+            onClick={() => handleLogout()}
+            className="md:hidden flex rounded p-4 content-center hover:bg-indigo-50 transition-colors duration-100 ease-out cursor-pointer"
           >
             <svg
               xmlns="http://www.w3.org/2000/svg"
@@ -140,14 +138,6 @@ export default function Navbar({ className }) {
           </span>
         </div>
       </nav>
-      <ModalConfirm
-        open={modal}
-        onClose={() => openModal(false)}
-        handleAction={() => handleLogout()}
-        name="Keluar"
-        description="Apakah anda ingin keluar dari akun ini?"
-        buttonText="Keluar"
-      />
     </div>
   );
 }

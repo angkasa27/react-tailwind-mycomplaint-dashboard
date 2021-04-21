@@ -31,7 +31,7 @@ export default function Home() {
       </div>
 
       <div className="mt-9 grid grid-cols-3 mx-5 md:mx-0 gap-5">
-        <AddCard className=" sm:col-span-1 from-blue-400 to-indigo-500 hover:to-blue-400" />
+        <AddCard className="  from-blue-400 to-indigo-500 hover:to-blue-400" />
         <CountCard
           name={'di proses'}
           value={statistic.data && statistic.data.onProgress}
